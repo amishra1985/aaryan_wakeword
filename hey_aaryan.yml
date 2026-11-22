@@ -1,0 +1,60 @@
+## Training config for train.py -- custom wake word "Hey Aaryan"
+
+model_name: "hey_aaryan"
+
+# The phrase(s) the model should activate on
+target_phrase:
+  - "hey aaryan"
+
+# Similar-sounding phrases to explicitly train against, to cut down on false positives
+# (add more here after you test the model and notice specific words triggering it)
+custom_negative_phrases:
+  - "hey aria"
+  - "hey ryan"
+  - "aaryan"
+  - "hey"
+
+# Number of synthetic positive samples to generate. With an 8GB GPU this is
+# fast enough to go higher than the CPU default - 30,000 gives a noticeably
+# more robust model in well under an hour. Bump to 50,000-100,000 if you
+# want to push quality further and don't mind a longer run.
+n_samples: 30000
+n_samples_val: 3000
+
+tts_batch_size: 100
+augmentation_batch_size: 32
+
+piper_sample_generator_path: "../piper-sample-generator"
+output_dir: "./my_custom_model"
+
+rir_paths:
+  - "./mit_rirs"
+
+background_paths:
+  - "./audioset_16k"
+  - "./gtzan"
+  - "./esc50"
+
+background_paths_duplication_rate:
+  - 1
+  - 1
+  - 1
+
+false_positive_validation_data_path: "./validation_set_features.npy"
+
+augmentation_rounds: 1
+
+feature_data_files:
+  "ACAV100M_sample": "./openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
+
+batch_n_per_class:
+  "ACAV100M_sample": 1024
+  "adversarial_negative": 50
+  "positive": 50
+
+model_type: "dnn"
+layer_size: 32
+
+steps: 50000
+max_negative_weight: 1500
+target_false_positives_per_hour: 0.2
